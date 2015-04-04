@@ -5,17 +5,35 @@
     <title>Othello</title>
     <style>
         .container {
-            width: 100%;
-            padding: 2em;
+            width: 720px;
+            margin: 2em auto;
+        }
+        .container:after {
+            content: "";
+            display: table;
+            clear: both;
         }
         .game-board-container {
             width: 320px;
-            margin: 0 auto;
+            float: left;
         }
         .game-board {
             width: 320px;
             box-sizing: border-box;
+        }
+        .score-board {
+            width: 200px;
+            float: left;
+            padding: 1em;
+            box-sizing: border-box;
+        }
 
+        .stats {
+            width: 100%;
+            padding: 1em;
+            margin: 1em 0;
+            border-top: 1px solid #666;
+            float: left;
         }
 
         .cell {
@@ -38,9 +56,24 @@
 </head>
 <body>
 <div class="container">
+    <div class="player-1 score-board">
+        <h3>Player One</h3>
+        <p>Score: <span class="score"></span></p>
+        <p>Moves: <span class="moves"></span></p>
+    </div>
+
     <div class="game-board-container">
         <h2>Othello</h2>
         <div class="game-board"></div>
+    </div>
+
+    <div class="player-2 score-board">
+        <h3>Player Two</h3>
+        <p>Score: <span class="score"></span></p>
+        <p>Moves: <span class="moves"></span></p>
+    </div>
+    <div class="stats">
+        <span class="player"></span> <span
     </div>
 </div>
 

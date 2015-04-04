@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Othello</title>
+    <style>
+        .container {
+            width: 100%;
+            padding: 2em;
+        }
+        .game-board-container {
+            width: 320px;
+            margin: 0 auto;
+        }
+        .game-board {
+            width: 320px;
+            box-sizing: border-box;
+
+        }
+
+        .cell {
+            width: 40px;
+            float: left;
+            font-size: .9em;
+            text-align: center;
+            line-height: 30px;
+            border: 1px solid #eee;
+            box-sizing: border-box;
+            padding: .25em;
+            cursor: pointer;
+
+        }
+
+        .cell:hover {
+            border: 1px solid #666;;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="game-board-container">
+        <h2>Othello</h2>
+        <div class="game-board"></div>
+    </div>
+</div>
+
+<script src="vendor/jQuery.js"></script>
+<script src="dist/app.js"></script>
+</body>
+</html>

@@ -6,7 +6,6 @@
     let gameBoard = {
             rows: []
         },
-        _moves = [],
         _playerOne = new Player( 1 ),
         _playerTwo = new Player( 2 ),
         _activePlayer = _playerOne,
@@ -48,11 +47,9 @@
 
         // calculate points and set cell values
         cellObj.player = activePlayerNumber;
-        let move = new Move( row, col, activePlayerNumber );
-        let pointsEarned = setScoreForMove( move.x, move.y, move.player );
-        move.pointValue = pointsEarned;
+        let pointsEarned = setScoreForMove( col, row, activePlayerNumber );
+        let move = new Move( row, col, pointsEarned );
 
-        _moves.push( move );
         _activePlayer.moves.push( move );
         _activePlayer.score += move.pointValue;
 
@@ -65,13 +62,11 @@
 
         // update state
         updateActivePlayer( otherPlayerNumber );
-
-        console.log( "Cell Object: ", cellObj );
         console.log( "It's now player %d's turn", otherPlayerNumber );
     } );
 
-    function updateActivePlayer( otherPlayerNumber ) {
-        let playerIndex = otherPlayerNumber === 1 ? 0 : 1;
+    function updateActivePlayer( newPlayerNumber ) {
+        let playerIndex = newPlayerNumber === 1 ? 0 : 1;
         _activePlayer = _players[ playerIndex ];
     }
 
@@ -113,6 +108,10 @@
     function calculatePoints( row, col, rowInc, colInc, player ) {
         let cells = [];
 
+        if ( row === -1 || col === -1 ) {
+            return 0;
+        }
+
         function getScore( r, c ) {
             console.log( "getScore: row: %d col: %d player: %d", r, c, player );
             let [ reachedEdge, isEmpty, isPoint, cell ] = checkCell( r, c, player );
@@ -144,46 +143,36 @@
         return [ hasReachedEdge, isEmptyCell, isPoint, cell ];
     }
 
-
     function searchRight( startingX, startingY, player ) {
-        console.log( "searchRight x: %d y: %d player: %d", startingX, startingY, player );
-
         return calculatePoints( startingY, startingX + 1, 0, 1, player );
     }
 
     function searchLeft( startingX, startingY, player ) {
-        // decrement startingX while cells belong to other player
-        return 0;
+        return calculatePoints( startingY, startingX - 1, 0, -1, player );
     }
 
     function searchUp( startingX, startingY, player ) {
-        // increment startingY while cells belong to other player
-        return 0;
+        return calculatePoints( startingY + 1, startingX, 1, 0, player );
     }
 
     function searchDown( startingX, startingY, player ) {
-        // decrement startingY while cells belong to other player
-        return 0;
+        return calculatePoints( startingY - 1, startingX, -1, 0, player );
     }
 
     function searchUpAndRight( startingX, startingY, player ) {
-        // increment startingX and startingY while cells belong to other player
-        return 0;
+        return calculatePoints( startingY + 1, startingX + 1, 1, 1, player );
     }
 
     function searchUpAndLeft( startingX, startingY, player ) {
-        // decrement startingX and increment startingY while cells belong to other player
-        return 0;
+        return calculatePoints( startingY + 1, startingX - 1, 1, -1, player );
     }
 
     function searchDownAndRight( startingX, startingY, player ) {
-        // decrement startingY and increment startingX while cells belong to other player
-        return 0;
+        return calculatePoints( startingY - 1, startingX + 1, -1, 1, player );
     }
 
     function searchDownAndLeft( startingX, startingY, player ) {
-        // decrement startingY and startingX while cells belong to other player
-        return 0;
+        return calculatePoints( startingY - 1, startingX - 1, -1, -1, player );
     }
 
 

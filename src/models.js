@@ -11,11 +11,10 @@ class Player {
 }
 
 class Move {
-    constructor ( row, col, player ) {
+    constructor ( row, col, points ) {
         this.x = col;
         this.y = row;
-        this.player = player;
-        this.pointValue = 0;
+        this.pointValue = points;
     }
 }
 

@@ -14,13 +14,12 @@ var Player = function Player(num) {
     this.moves = [];
 };
 
-var Move = function Move(row, col, player) {
+var Move = function Move(row, col, points) {
     _classCallCheck(this, Move);
 
     this.x = col;
     this.y = row;
-    this.player = player;
-    this.pointValue = 0;
+    this.pointValue = points;
 };
 
 var Cell = function Cell(row, col) {
@@ -43,7 +42,6 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
     var gameBoard = {
         rows: []
     },
-        _moves = [],
         _playerOne = new Player(1),
         _playerTwo = new Player(2),
         _activePlayer = _playerOne,
@@ -88,11 +86,9 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
 
         // calculate points and set cell values
         cellObj.player = activePlayerNumber;
-        var move = new Move(row, col, activePlayerNumber);
-        var pointsEarned = setScoreForMove(move.x, move.y, move.player);
-        move.pointValue = pointsEarned;
+        var pointsEarned = setScoreForMove(col, row, activePlayerNumber);
+        var move = new Move(row, col, pointsEarned);
 
-        _moves.push(move);
         _activePlayer.moves.push(move);
         _activePlayer.score += move.pointValue;
 
@@ -105,13 +101,11 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
 
         // update state
         updateActivePlayer(otherPlayerNumber);
-
-        console.log("Cell Object: ", cellObj);
         console.log("It's now player %d's turn", otherPlayerNumber);
     });
 
-    function updateActivePlayer(otherPlayerNumber) {
-        var playerIndex = otherPlayerNumber === 1 ? 0 : 1;
+    function updateActivePlayer(newPlayerNumber) {
+        var playerIndex = newPlayerNumber === 1 ? 0 : 1;
         _activePlayer = _players[playerIndex];
     }
 
@@ -152,6 +146,10 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
 
     function calculatePoints(row, col, rowInc, colInc, player) {
         var cells = [];
+
+        if (row === -1 || col === -1) {
+            return 0;
+        }
 
         function getScore(_x, _x2) {
             var _again = true;
@@ -205,44 +203,35 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
     }
 
     function searchRight(startingX, startingY, player) {
-        console.log("searchRight x: %d y: %d player: %d", startingX, startingY, player);
-
         return calculatePoints(startingY, startingX + 1, 0, 1, player);
     }
 
     function searchLeft(startingX, startingY, player) {
-        // decrement startingX while cells belong to other player
-        return 0;
+        return calculatePoints(startingY, startingX - 1, 0, -1, player);
     }
 
     function searchUp(startingX, startingY, player) {
-        // increment startingY while cells belong to other player
-        return 0;
+        return calculatePoints(startingY + 1, startingX, 1, 0, player);
     }
 
     function searchDown(startingX, startingY, player) {
-        // decrement startingY while cells belong to other player
-        return 0;
+        return calculatePoints(startingY - 1, startingX, -1, 0, player);
     }
 
     function searchUpAndRight(startingX, startingY, player) {
-        // increment startingX and startingY while cells belong to other player
-        return 0;
+        return calculatePoints(startingY + 1, startingX + 1, 1, 1, player);
     }
 
     function searchUpAndLeft(startingX, startingY, player) {
-        // decrement startingX and increment startingY while cells belong to other player
-        return 0;
+        return calculatePoints(startingY + 1, startingX - 1, 1, -1, player);
     }
 
     function searchDownAndRight(startingX, startingY, player) {
-        // decrement startingY and increment startingX while cells belong to other player
-        return 0;
+        return calculatePoints(startingY - 1, startingX + 1, -1, 1, player);
     }
 
     function searchDownAndLeft(startingX, startingY, player) {
-        // decrement startingY and startingX while cells belong to other player
-        return 0;
+        return calculatePoints(startingY - 1, startingX - 1, -1, -1, player);
     }
 
     setNewGameValues();

@@ -23,11 +23,7 @@
         gameBoard.rows.push( row );
     }
 
-    _scoreKeeper = new ScoreKeeper(gameBoard);
-
-
-  //  console.log("Flat game board: ", getFlatGameBoard());
-    console.log("Empty cells: ", _scoreKeeper.getEmptyCells());
+    _scoreKeeper = new ScoreKeeper( gameBoard );
 
     function renderGameBoard() {
         console.log( "Gameboard: ", gameBoard );
@@ -53,7 +49,7 @@
         //    _scoreKeeper.getGameBoardState( activePlayerNumber, otherPlayerNumber );
 
 
-        console.log("Active player: ", activePlayerNumber);
+        console.log( "Active player: ", activePlayerNumber );
         if ( !_scoreKeeper.isLegalMove( col, row, activePlayerNumber ) ) {
             return;
         }
@@ -68,9 +64,6 @@
         // check if next player has any moves based on board state
         // no, declare victory, else continue
 
-        // update board
-        renderGameBoard();
-        updateScoreBoards( _players );
 
         //if ( gameOver ) {
         //    // announce verdict
@@ -84,15 +77,12 @@
         //    console.log( "It's still player %d's turn", otherPlayerNumber );
         //}
 
-            updateActivePlayer( otherPlayerNumber );
-            // change active player in UI
-            console.log( "It's now player %d's turn", otherPlayerNumber );
+        updateActivePlayer( otherPlayerNumber );
+        renderGameBoard();
+        updateScoreBoards( _players );
+        console.log( "It's now player %d's turn", otherPlayerNumber );
 
     } );
-
-
-
-
 
 
     function updateActivePlayer( newPlayerNumber ) {
@@ -102,11 +92,18 @@
 
     function updateScoreBoards( players ) {
         players.forEach( function ( player ) {
+            let $playerSoreBoard = $( ".player-" + player.number );
 
             player.score = _scoreKeeper.getScoreForPlayer( player.number );
 
             $( ".player-" + player.number + " .score" ).html( player.score );
             $( ".player-" + player.number + " .moves" ).html( player.moves.length );
+
+            if ( player.number === _activePlayer.number ) {
+                $playerSoreBoard.addClass( "active" );
+            } else {
+                $playerSoreBoard.removeClass( "active" );
+            }
         } );
     }
 
@@ -125,4 +122,8 @@
     setNewGameValues();
     renderGameBoard();
     updateScoreBoards( _players );
+
+
+
+    console.log( "Empty cells: ", _scoreKeeper.getEmptyCells() );
 })();

@@ -20,12 +20,16 @@ gulp.task("reload", function () {
 
     gulp.src("./index.html" )
         .pipe(reload());
+    gulp.src("./tests/SpecRunner.html" )
+        .pipe(reload());
 });
 
 gulp.task("watch", function () {
     reload.listen();
     gulp.watch('src/**/*.js', ["build", "reload"]);
+    gulp.watch('tests/spec/*.js', ["reload"]);
     gulp.watch("./index.html", ["reload"]);
+    gulp.watch("tests/SpecRunner.html", ["reload"]);
 });
 
 gulp.task("default", function() {

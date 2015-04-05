@@ -50,7 +50,20 @@
         }
 
         .cell:hover {
-            border: 1px solid #666;;
+            border: 1px solid #666;
+        }
+
+        .cell[data-player-num="1"] {
+            background: #000;
+            color: #fff;
+        }
+
+        .cell[data-player-num="2"] {
+            background: #ccc;
+        }
+
+        .score-board.active {
+            border: 1px solid #000;
         }
     </style>
 </head>

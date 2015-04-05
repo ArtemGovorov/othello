@@ -2,38 +2,13 @@
 
 var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 /**
- * Created by Eric on 4/4/2015.
+ * Created by Eric on 4/5/2015.
  */
-
-var Player = function Player(num) {
-    _classCallCheck(this, Player);
-
-    this.number = num;
-    this.score = 2;
-    this.moves = [];
-};
-
-var Move = function Move(row, col, points) {
-    _classCallCheck(this, Move);
-
-    this.x = col;
-    this.y = row;
-    this.pointValue = points;
-};
-
-var Cell = function Cell(row, col) {
-    _classCallCheck(this, Cell);
-
-    this.row = row;
-    this.col = col;
-    this.player = 0;
-    this.value = "" + this.row + "-" + this.col;
-};
 
 var ScoreKeeper = (function () {
     function ScoreKeeper(gameBoard) {
@@ -173,55 +148,79 @@ var ScoreKeeper = (function () {
     }, {
         key: "searchRight",
         value: function searchRight(startingX, startingY, player) {
-            console.log("searchRight( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY, startingX + 1, 0, 1, player);
         }
     }, {
         key: "searchLeft",
         value: function searchLeft(startingX, startingY, player) {
-            console.log("searchLeft( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY, startingX - 1, 0, -1, player);
         }
     }, {
         key: "searchUp",
         value: function searchUp(startingX, startingY, player) {
-            console.log("searchUp( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY + 1, startingX, 1, 0, player);
         }
     }, {
         key: "searchDown",
         value: function searchDown(startingX, startingY, player) {
-            console.log("searchDown( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY - 1, startingX, -1, 0, player);
         }
     }, {
         key: "searchUpAndRight",
         value: function searchUpAndRight(startingX, startingY, player) {
-            console.log("searchUpAndRight( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY + 1, startingX + 1, 1, 1, player);
         }
     }, {
         key: "searchUpAndLeft",
         value: function searchUpAndLeft(startingX, startingY, player) {
-            console.log("searchUpAndLeft( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY + 1, startingX - 1, 1, -1, player);
         }
     }, {
         key: "searchDownAndRight",
         value: function searchDownAndRight(startingX, startingY, player) {
-            console.log("searchDownAndRight( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY - 1, startingX + 1, -1, 1, player);
         }
     }, {
         key: "searchDownAndLeft",
         value: function searchDownAndLeft(startingX, startingY, player) {
-            console.log("searchDownAndLeft( %d, %d, %d )", startingX, startingY, player);
             return this.calculatePoints(startingY - 1, startingX - 1, -1, -1, player);
         }
     }]);
 
     return ScoreKeeper;
 })();
+"use strict";
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+/**
+ * Created by Eric on 4/4/2015.
+ */
+
+var Player = function Player(num) {
+    _classCallCheck(this, Player);
+
+    this.number = num;
+    this.score = 2;
+    this.moves = [];
+};
+
+var Move = function Move(row, col, points) {
+    _classCallCheck(this, Move);
+
+    this.x = col;
+    this.y = row;
+    this.pointValue = points;
+};
+
+var Cell = function Cell(row, col) {
+    _classCallCheck(this, Cell);
+
+    this.row = row;
+    this.col = col;
+    this.player = 0;
+    this.value = "" + this.row + "-" + this.col;
+};
 "use strict";
 
 var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
@@ -252,9 +251,6 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
     }
 
     _scoreKeeper = new ScoreKeeper(gameBoard);
-
-    //  console.log("Flat game board: ", getFlatGameBoard());
-    console.log("Empty cells: ", _scoreKeeper.getEmptyCells());
 
     function renderGameBoard() {
         console.log("Gameboard: ", gameBoard);
@@ -300,10 +296,6 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
         // check if next player has any moves based on board state
         // no, declare victory, else continue
 
-        // update board
-        renderGameBoard();
-        updateScoreBoards(_players);
-
         //if ( gameOver ) {
         //    // announce verdict
         //    console.log("GAME OVER");
@@ -317,7 +309,8 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
         //}
 
         updateActivePlayer(otherPlayerNumber);
-        // change active player in UI
+        renderGameBoard();
+        updateScoreBoards(_players);
         console.log("It's now player %d's turn", otherPlayerNumber);
     });
 
@@ -328,11 +321,18 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
 
     function updateScoreBoards(players) {
         players.forEach(function (player) {
+            var $playerSoreBoard = $(".player-" + player.number);
 
             player.score = _scoreKeeper.getScoreForPlayer(player.number);
 
             $(".player-" + player.number + " .score").html(player.score);
             $(".player-" + player.number + " .moves").html(player.moves.length);
+
+            if (player.number === _activePlayer.number) {
+                $playerSoreBoard.addClass("active");
+            } else {
+                $playerSoreBoard.removeClass("active");
+            }
         });
     }
 
@@ -351,5 +351,7 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
     setNewGameValues();
     renderGameBoard();
     updateScoreBoards(_players);
+
+    console.log("Empty cells: ", _scoreKeeper.getEmptyCells());
 })();
 //# sourceMappingURL=app.js.map

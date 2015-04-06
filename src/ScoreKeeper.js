@@ -8,11 +8,6 @@ class ScoreKeeper {
         this.numCols = gameBoard.rows[0].length;
     }
 
-
-    isLegalMove( x, y, player ) {
-        return this.setScoreForMove( x, y, player ) > 0;
-    }
-
     playerHasNextMove( playerNumber ) {
         let self = this;
         self.getEmptyCells().forEach( function ( cell ) {

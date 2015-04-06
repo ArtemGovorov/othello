@@ -23,7 +23,7 @@ class Cell {
         this.row = row;
         this.col = col;
         this.player = 0;
-        this.value = `${this.row}-${this.col}`;
+        this.potentialTarget = false;
     }
 }
 

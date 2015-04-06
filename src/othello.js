@@ -30,7 +30,7 @@
         let html = '';
         gameBoard.rows.forEach( function ( row, i ) {
             row.forEach( function ( cell, j ) {
-                html += `<div class='cell' data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
+                html += `<div class='cell' data-target="${cell.potentialTarget}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
             } );
 
         } );
@@ -44,15 +44,12 @@
         let col = +$cell.data( "col-num" );
         let player = +$cell.data( "player-num" );
         let cellObj = gameBoard.rows[ row ][ col ];
+        let isTarget = $cell.data("target");
         let [ activePlayerNumber, otherPlayerNumber ] = getPlayerNumbers();
         //let [ nextPlayerHasMove, currentPlayerHasMove, gameOver ] =
         //    _scoreKeeper.getGameBoardState( activePlayerNumber, otherPlayerNumber );
 
-
-        console.log( "Active player: ", activePlayerNumber );
-        if ( !_scoreKeeper.isLegalMove( col, row, activePlayerNumber ) ) {
-            return;
-        }
+        if ( !isTarget ) return;
 
         // calculate points and set cell values
         cellObj.player = activePlayerNumber;
@@ -63,7 +60,7 @@
 
         // check if next player has any moves based on board state
         // no, declare victory, else continue
-
+        let potentialNextMoves = getPotentialNextMovesForNextPlayer( );
 
         //if ( gameOver ) {
         //    // announce verdict
@@ -80,10 +77,84 @@
         updateActivePlayer( otherPlayerNumber );
         renderGameBoard();
         updateScoreBoards( _players );
-        console.log( "It's now player %d's turn", otherPlayerNumber );
+
+        if ( potentialNextMoves ) {
+            console.log( "It's now player %d's turn", otherPlayerNumber );
+        } else {
+            console.log( "No next moves for player %d", otherPlayerNumber );
+        }
+
 
     } );
 
+    function getPotentialNextMovesForNextPlayer( ) {
+        let flatGamBoard = _scoreKeeper.getFlatGameBoard();
+        flatGamBoard.forEach( function ( cell ) {
+            cell.potentialTarget = false;
+        } );
+
+        let activePlayerCells = flatGamBoard
+            .filter( function ( cell ) {
+                return cell.player === _activePlayer.number;
+            } );
+
+        console.log("Active player cells: ", activePlayerCells);
+
+        let potentialNextMoves = [];
+        let rows = gameBoard.rows;
+        activePlayerCells.forEach( function ( c ) {
+            let above = rows[ c.row + 1 ][ c.col ];
+            if ( above.player === 0 ) {
+                above.potentialTarget = true;
+                potentialNextMoves.push( above );
+            }
+
+
+            let aboveRight = rows[ c.row + 1 ][ c.col + 1 ];
+            if ( aboveRight.player === 0 ) {
+                aboveRight.potentialTarget = true;
+                potentialNextMoves.push( aboveRight );
+            }
+
+            let aboveLeft = rows[ c.row + 1 ][ c.col - 1 ];
+            if ( aboveLeft.player === 0 ) {
+                aboveLeft.potentialTarget = true;
+                potentialNextMoves.push( aboveLeft );
+            }
+
+            let left = rows[ c.row ][ c.col - 1 ];
+            if ( left.player === 0 ) {
+                left.potentialTarget = true;
+                potentialNextMoves.push( left );
+            }
+
+            let right = rows[ c.row ][ c.col + 1 ];
+            if ( right.player === 0 ) {
+                right.potentialTarget = true;
+                potentialNextMoves.push( right );
+            }
+
+            let below = rows[ c.row - 1 ][ c.col ];
+            if ( below.player === 0 ) {
+                below.potentialTarget = true;
+                potentialNextMoves.push( below );
+            }
+
+            let belowRight = rows[ c.row - 1 ][ c.col + 1 ];
+            if ( belowRight.player === 0 ) {
+                belowRight.potentialTarget = true;
+                potentialNextMoves.push( belowRight );
+            }
+
+            let belowLeft = rows[ c.row - 1 ][ c.col - 1 ];
+            if ( belowLeft.player === 0 ) {
+                belowLeft.potentialTarget = true;
+                potentialNextMoves.push( belowLeft );
+            }
+
+            return potentialNextMoves;
+        } );
+    }
 
     function updateActivePlayer( newPlayerNumber ) {
         let playerIndex = newPlayerNumber === 1 ? 0 : 1;
@@ -112,6 +183,12 @@
         gameBoard.rows[ 4 ][ 3 ].player = 2;
         gameBoard.rows[ 3 ][ 4 ].player = 2;
         gameBoard.rows[ 4 ][ 4 ].player = 1;
+
+        // mark player one potential targets
+        gameBoard.rows[ 2 ][ 4 ].potentialTarget = true;
+        gameBoard.rows[ 3 ][ 5 ].potentialTarget = true;
+        gameBoard.rows[ 4 ][ 2 ].potentialTarget = true;
+        gameBoard.rows[ 5 ][ 3 ].potentialTarget = true;
     }
 
     function getPlayerNumbers() {
@@ -122,7 +199,6 @@
     setNewGameValues();
     renderGameBoard();
     updateScoreBoards( _players );
-
 
 
     console.log( "Empty cells: ", _scoreKeeper.getEmptyCells() );

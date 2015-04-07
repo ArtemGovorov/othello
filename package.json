@@ -1,0 +1,39 @@
+{
+  "name": "Othello",
+  "version": "1.0.0",
+  "description": "One or Two person game of Othello",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "gulp": "^3.8.11",
+    "gulp-babel": "^5.0.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-livereload": "^3.8.0",
+    "gulp-uglify": "^1.1.0",
+    "gulp-watch": "^4.2.3",
+    "gulp-sourcemaps": "^1.5.1",
+    "jasmine-core": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericlobdell/othello.git"
+  },
+  "keywords": [
+    "js",
+    "es6",
+    "ai",
+    "game"
+  ],
+  "author": "Eric Lobdell <eric@ericlobdell.io> (http://ericlobdell.io/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericlobdell/othello/issues"
+  },
+  "homepage": "https://github.com/ericlobdell/othello"
+}

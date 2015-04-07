@@ -29,19 +29,20 @@ class ScoreKeeper {
 
 
     setScoreForMove( x, y, player ) {
-        let points = 0;
+        let hits = [];
 
-        points += this.searchUp( x, y, player );
-        points += this.searchUpAndRight( x, y, player );
-        points += this.searchRight( x, y, player );
-        points += this.searchDownAndRight( x, y, player );
-        points += this.searchDown( x, y, player );
-        points += this.searchDownAndLeft( x, y, player );
-        points += this.searchLeft( x, y, player );
-        points += this.searchUpAndLeft( x, y, player );
+        hits = hits.concat( this.searchUp( x, y, player ) );
+        hits = hits.concat( this.searchUpAndRight( x, y, player  ));
+        hits = hits.concat( this.searchRight( x, y, player ));
+        hits = hits.concat( this.searchDownAndRight( x, y, player ));
+        hits = hits.concat( this.searchDown( x, y, player ));
+        hits = hits.concat( this.searchDownAndLeft( x, y, player ));
+        hits = hits.concat( this.searchLeft( x, y, player ));
+        hits = hits.concat( this.searchUpAndLeft( x, y, player ));
 
-        console.log( "POINTS EARNED: %d", points );
-        return points;
+        console.log( "POINTS EARNED: %d", hits.length );
+        console.log( "HITS: ", hits );
+        return hits;
     }
 
     getFlatGameBoard() {
@@ -58,24 +59,21 @@ class ScoreKeeper {
         let cells = [], self = this;
 
         if ( row === -1 || col === -1 || row === 8 || col === 8 ) {
-            return 0;
+            return [];
         }
 
         function getScore( r, c ) {
-            console.log( "getScore: row: %d col: %d player: %d", r, c, player );
             let [ reachedEdge, isEmpty, isPoint, cell ] = self.checkCell( r, c, player );
 
             if ( reachedEdge || isEmpty ) {
-                cells = [];
-                return 0;
+                return [];
             } else if ( isPoint ) {
+                console.log("HIT! ", cell);
                 cells.push( cell );
                 return getScore( r + rowInc, c + colInc );
             } else {
-                cells.forEach( function ( cell ) {
-                    cell.player = player;
-                } );
-                return cells.length;
+                console.log("Returning cells: ", cells);
+                return cells;
             }
         }
 
@@ -83,7 +81,6 @@ class ScoreKeeper {
     }
 
     checkCell( row, col, player ) {
-        console.log("checkCell: row %d col %d", row, col);
         let hasReachedEdge = ( row === this.numRows - 1 || col === this.numCols - 1 ),
             cell = this.gameBoard.rows[ row ][ col ],
             isEmptyCell = cell.player === 0,

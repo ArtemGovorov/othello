@@ -43,19 +43,20 @@ var ScoreKeeper = (function () {
     }, {
         key: "setScoreForMove",
         value: function setScoreForMove(x, y, player) {
-            var points = 0;
+            var hits = [];
 
-            points += this.searchUp(x, y, player);
-            points += this.searchUpAndRight(x, y, player);
-            points += this.searchRight(x, y, player);
-            points += this.searchDownAndRight(x, y, player);
-            points += this.searchDown(x, y, player);
-            points += this.searchDownAndLeft(x, y, player);
-            points += this.searchLeft(x, y, player);
-            points += this.searchUpAndLeft(x, y, player);
+            hits = hits.concat(this.searchUp(x, y, player));
+            hits = hits.concat(this.searchUpAndRight(x, y, player));
+            hits = hits.concat(this.searchRight(x, y, player));
+            hits = hits.concat(this.searchDownAndRight(x, y, player));
+            hits = hits.concat(this.searchDown(x, y, player));
+            hits = hits.concat(this.searchDownAndLeft(x, y, player));
+            hits = hits.concat(this.searchLeft(x, y, player));
+            hits = hits.concat(this.searchUpAndLeft(x, y, player));
 
-            console.log("POINTS EARNED: %d", points);
-            return points;
+            console.log("POINTS EARNED: %d", hits.length);
+            console.log("HITS: ", hits);
+            return hits;
         }
     }, {
         key: "getFlatGameBoard",
@@ -76,7 +77,7 @@ var ScoreKeeper = (function () {
                 self = this;
 
             if (row === -1 || col === -1 || row === 8 || col === 8) {
-                return 0;
+                return [];
             }
 
             function getScore(_x, _x2) {
@@ -88,8 +89,6 @@ var ScoreKeeper = (function () {
                     var r = _x,
                         c = _x2;
 
-                    console.log("getScore: row: %d col: %d player: %d", r, c, player);
-
                     var _self$checkCell = self.checkCell(r, c, player);
 
                     var _self$checkCell2 = _slicedToArray(_self$checkCell, 4);
@@ -100,19 +99,17 @@ var ScoreKeeper = (function () {
                     var cell = _self$checkCell2[3];
 
                     if (reachedEdge || isEmpty) {
-                        cells = [];
-                        return 0;
+                        return [];
                     } else if (isPoint) {
+                        console.log("HIT! ", cell);
                         cells.push(cell);
                         _x = r + rowInc;
                         _x2 = c + colInc;
                         _again = true;
                         continue _function;
                     } else {
-                        cells.forEach(function (cell) {
-                            cell.player = player;
-                        });
-                        return cells.length;
+                        console.log("Returning cells: ", cells);
+                        return cells;
                     }
                 }
             }
@@ -122,7 +119,6 @@ var ScoreKeeper = (function () {
     }, {
         key: "checkCell",
         value: function checkCell(row, col, player) {
-            console.log("checkCell: row %d col %d", row, col);
             var hasReachedEdge = row === this.numRows - 1 || col === this.numCols - 1,
                 cell = this.gameBoard.rows[row][col],
                 isEmptyCell = cell.player === 0,
@@ -277,11 +273,17 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
         //let [ nextPlayerHasMove, currentPlayerHasMove, gameOver ] =
         //    _scoreKeeper.getGameBoardState( activePlayerNumber, otherPlayerNumber );
 
-        if (!isTarget) return;
-
         // calculate points and set cell values
+        var hits = _scoreKeeper.setScoreForMove(col, row, activePlayerNumber);
+        var pointsEarned = hits.length;
+        console.log("Hits: ", pointsEarned);
+        if (!isTarget || pointsEarned === 0) return;
+
         cellObj.player = activePlayerNumber;
-        var pointsEarned = _scoreKeeper.setScoreForMove(col, row, activePlayerNumber);
+        hits.forEach(function (h) {
+            h.player = activePlayerNumber;
+        });
+
         var move = new Move(row, col, pointsEarned);
 
         _activePlayer.moves.push(move);
@@ -329,55 +331,66 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
         var rows = gameBoard.rows;
         activePlayerCells.forEach(function (c) {
             var above = rows[c.row + 1][c.col];
-            if (above.player === 0) {
+            if (moveEarnsPoints(above)) {
                 above.potentialTarget = true;
                 potentialNextMoves.push(above);
             }
 
             var aboveRight = rows[c.row + 1][c.col + 1];
-            if (aboveRight.player === 0) {
+            if (moveEarnsPoints(aboveRight)) {
                 aboveRight.potentialTarget = true;
                 potentialNextMoves.push(aboveRight);
             }
 
             var aboveLeft = rows[c.row + 1][c.col - 1];
-            if (aboveLeft.player === 0) {
+            if (moveEarnsPoints(aboveLeft)) {
                 aboveLeft.potentialTarget = true;
                 potentialNextMoves.push(aboveLeft);
             }
 
             var left = rows[c.row][c.col - 1];
-            if (left.player === 0) {
+            if (moveEarnsPoints(left)) {
                 left.potentialTarget = true;
                 potentialNextMoves.push(left);
             }
 
             var right = rows[c.row][c.col + 1];
-            if (right.player === 0) {
+            if (moveEarnsPoints(right)) {
                 right.potentialTarget = true;
                 potentialNextMoves.push(right);
             }
 
             var below = rows[c.row - 1][c.col];
-            if (below.player === 0) {
+            if (moveEarnsPoints(below)) {
                 below.potentialTarget = true;
                 potentialNextMoves.push(below);
             }
 
             var belowRight = rows[c.row - 1][c.col + 1];
-            if (belowRight.player === 0) {
+            if (moveEarnsPoints(belowRight)) {
                 belowRight.potentialTarget = true;
                 potentialNextMoves.push(belowRight);
             }
 
             var belowLeft = rows[c.row - 1][c.col - 1];
-            if (belowLeft.player === 0) {
+            if (moveEarnsPoints(belowLeft)) {
                 belowLeft.potentialTarget = true;
                 potentialNextMoves.push(belowLeft);
             }
 
             return potentialNextMoves;
         });
+    }
+
+    function moveEarnsPoints(cell) {
+        var _getPlayerNumbers3 = getPlayerNumbers();
+
+        var _getPlayerNumbers32 = _slicedToArray(_getPlayerNumbers3, 2);
+
+        var x = _getPlayerNumbers32[0];
+        var otherPlayerNumber = _getPlayerNumbers32[1];
+        var hits = _scoreKeeper.setScoreForMove(cell.col, cell.row, otherPlayerNumber);
+        return cell.player === 0 && hits.length > 0;
     }
 
     function updateActivePlayer(newPlayerNumber) {

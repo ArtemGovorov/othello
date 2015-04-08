@@ -19,14 +19,6 @@ class ScoreKeeper {
         return false;
     }
 
-    getGameBoardState( currentPlayerNumber, nextPlayerNumber) {
-        let nextPlayerHasMove = this.playerHasNextMove( nextPlayerNumber ),
-            currentPlayerHasMove = this.playerHasNextMove( currentPlayerNumber ),
-            gameOver = !nextPlayerHasMove && !currentPlayerHasMove;
-
-        return [ nextPlayerHasMove, currentPlayerHasMove, gameOver ];
-    }
-
 
     setScoreForMove( x, y, player ) {
         let hits = [];
@@ -96,6 +88,12 @@ class ScoreKeeper {
             }
             return score;
         }, 0)
+    }
+
+    resetMoveScoreRatings( ) {
+        this.getFlatGameBoard().forEach( function ( cell ) {
+            cell.isHighestScoring = false;
+        } );
     }
 
     searchRight( startingX, startingY, player ) {

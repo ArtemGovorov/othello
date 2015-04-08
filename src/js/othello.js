@@ -30,7 +30,7 @@
         let html = '';
         gameBoard.rows.forEach( function ( row, i ) {
             row.forEach( function ( cell, j ) {
-                html += `<div class='cell' data-target="${cell.potentialTarget}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
+                html += `<div class='cell' data-target="${cell.potentialTarget}" data-is-highest-sciring-move="${cell.isHighestScoring}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
             } );
 
         } );
@@ -46,18 +46,18 @@
         let cellObj = gameBoard.rows[ row ][ col ];
         let isTarget = $cell.data( "target" );
         let [ activePlayerNumber, otherPlayerNumber ] = getPlayerNumbers();
-        //let [ nextPlayerHasMove, currentPlayerHasMove, gameOver ] =
-        //    _scoreKeeper.getGameBoardState( activePlayerNumber, otherPlayerNumber );
 
         // calculate points and set cell values
         let hits = _scoreKeeper.setScoreForMove( col, row, activePlayerNumber );
         let pointsEarned = hits.length;
-        console.log("Hits: ", pointsEarned);
+
         if ( !isTarget || pointsEarned === 0 )
             return;
 
         cellObj.player = activePlayerNumber;
-        hits.forEach( function ( h ) { h.player = activePlayerNumber } );
+        hits.forEach( function ( h ) {
+            h.player = activePlayerNumber
+        } );
 
         let move = new Move( row, col, pointsEarned );
 
@@ -66,6 +66,12 @@
         // check if next player has any moves based on board state
         // no, declare victory, else continue
         let potentialNextMoves = getPotentialNextMovesForNextPlayer();
+        console.log( "Potential Next Moves: ", potentialNextMoves );
+        let highestScoringNextMove = potentialNextMoves.sort( function ( c1, c2 ) {
+            return c2.pointValue - c1.pointValue;
+        } )[0];
+
+        highestScoringNextMove.isHighestScoring = true;
 
         //if ( gameOver ) {
         //    // announce verdict
@@ -82,6 +88,7 @@
         updateActivePlayer( otherPlayerNumber );
         renderGameBoard();
         updateScoreBoards( _players );
+        _scoreKeeper.resetMoveScoreRatings();
 
         if ( potentialNextMoves ) {
             console.log( "It's now player %d's turn", otherPlayerNumber );
@@ -107,64 +114,56 @@
 
         let potentialNextMoves = [];
         let rows = gameBoard.rows;
+        let moveResult;
+
         activePlayerCells.forEach( function ( c ) {
             let above = rows[ c.row + 1 ][ c.col ];
-            if ( moveEarnsPoints( above ) ) {
-                above.potentialTarget = true;
-                potentialNextMoves.push( above );
-            }
-
+            scoreMove( above, potentialNextMoves );
 
             let aboveRight = rows[ c.row + 1 ][ c.col + 1 ];
-            if ( moveEarnsPoints( aboveRight ) ) {
-                aboveRight.potentialTarget = true;
-                potentialNextMoves.push( aboveRight );
-            }
+            scoreMove( aboveRight, potentialNextMoves );
 
             let aboveLeft = rows[ c.row + 1 ][ c.col - 1 ];
-            if ( moveEarnsPoints( aboveLeft ) ) {
-                aboveLeft.potentialTarget = true;
-                potentialNextMoves.push( aboveLeft );
-            }
+            scoreMove( aboveLeft, potentialNextMoves );
 
             let left = rows[ c.row ][ c.col - 1 ];
-            if ( moveEarnsPoints( left ) ) {
-                left.potentialTarget = true;
-                potentialNextMoves.push( left );
-            }
+            scoreMove( left, potentialNextMoves );
 
             let right = rows[ c.row ][ c.col + 1 ];
-            if ( moveEarnsPoints( right ) ) {
-                right.potentialTarget = true;
-                potentialNextMoves.push( right );
-            }
+            scoreMove( right, potentialNextMoves );
 
             let below = rows[ c.row - 1 ][ c.col ];
-            if ( moveEarnsPoints( below ) ) {
-                below.potentialTarget = true;
-                potentialNextMoves.push( below );
-            }
+            scoreMove( below, potentialNextMoves );
 
             let belowRight = rows[ c.row - 1 ][ c.col + 1 ];
-            if ( moveEarnsPoints( belowRight ) ) {
-                belowRight.potentialTarget = true;
-                potentialNextMoves.push( belowRight );
-            }
+            scoreMove( belowRight, potentialNextMoves );
 
             let belowLeft = rows[ c.row - 1 ][ c.col - 1 ];
-            if ( moveEarnsPoints( belowLeft ) ) {
-                belowLeft.potentialTarget = true;
-                potentialNextMoves.push( belowLeft );
-            }
-
-            return potentialNextMoves;
+            scoreMove( belowLeft, potentialNextMoves );
         } );
+
+        return potentialNextMoves;
     }
 
     function moveEarnsPoints( cell ) {
         let [x,  otherPlayerNumber ] = getPlayerNumbers(),
-            hits = _scoreKeeper.setScoreForMove( cell.col, cell.row, otherPlayerNumber );
-        return cell.player === 0 && hits.length > 0;
+            hits = _scoreKeeper.setScoreForMove( cell.col, cell.row, otherPlayerNumber ),
+            points = hits.length,
+            isHit = cell.player === 0 && points > 0;
+
+        return { isHit: isHit, points: points };
+    }
+
+    function scoreMove( move, potentialNextMoves ) {
+        let moveResult = moveEarnsPoints( move );
+        console.log( "belowLeft isHit: %a points: %d", moveResult.isHit, moveResult.points );
+        if ( moveResult.isHit ) {
+            move.potentialTarget = true;
+            move.pointValue = moveResult.points;
+
+            if ( potentialNextMoves.indexOf( move ) === -1 )
+                potentialNextMoves.push( move );
+        }
     }
 
     function updateActivePlayer( newPlayerNumber ) {

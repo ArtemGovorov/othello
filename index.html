@@ -1,75 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
+    <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
     <meta charset="UTF-8">
     <title>Othello</title>
-    <style>
-        .container {
-            width: 720px;
-            margin: 2em auto;
-        }
-        .container:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .game-board-container {
-            width: 320px;
-            float: left;
-        }
-        .game-board {
-            width: 320px;
-            box-sizing: border-box;
-        }
-        .score-board {
-            width: 200px;
-            float: left;
-            padding: 1em;
-            box-sizing: border-box;
-        }
-
-        .stats {
-            width: 100%;
-            padding: 1em;
-            margin: 1em 0;
-            border-top: 1px solid #666;
-            float: left;
-        }
-
-        .cell {
-            width: 40px;
-            float: left;
-            font-size: .9em;
-            text-align: center;
-            line-height: 30px;
-            border: 1px solid #eee;
-            box-sizing: border-box;
-            padding: .25em;
-            cursor: pointer;
-
-        }
-
-        .cell:hover {
-            border: 1px solid #666;
-        }
-
-        .cell[data-player-num="1"] {
-            background: #000;
-            color: #fff;
-        }
-
-        .cell[data-player-num="2"] {
-            background: #ccc;
-        }
-
-        .cell[data-target="true"] {
-            border: 1px solid #FF0000;
-        }
-
-        .score-board.active {
-            border: 1px solid #000;
-        }
-    </style>
+    <link href="dist/css/app.min.css" rel="stylesheet" />
 </head>
 <body>
 <div class="container">
@@ -90,11 +25,11 @@
         <p>Moves: <span class="moves"></span></p>
     </div>
     <div class="stats">
-        <span class="player"></span> <span
+        <span class="player"></span>
     </div>
 </div>
 
 <script src="vendor/jQuery.js"></script>
-<script src="dist/app.js"></script>
+<script src="dist/js/app.js"></script>
 </body>
 </html>

@@ -270,13 +270,10 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
         var activePlayerNumber = _getPlayerNumbers2[0];
         var otherPlayerNumber = _getPlayerNumbers2[1];
 
-        //let [ nextPlayerHasMove, currentPlayerHasMove, gameOver ] =
-        //    _scoreKeeper.getGameBoardState( activePlayerNumber, otherPlayerNumber );
-
         // calculate points and set cell values
         var hits = _scoreKeeper.setScoreForMove(col, row, activePlayerNumber);
         var pointsEarned = hits.length;
-        console.log("Hits: ", pointsEarned);
+
         if (!isTarget || pointsEarned === 0) return;
 
         cellObj.player = activePlayerNumber;

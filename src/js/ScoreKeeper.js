@@ -28,8 +28,6 @@ class ScoreKeeper {
         hits = hits.concat( this.searchLeft( x, y, player, gameBoard ) );
         hits = hits.concat( this.searchUpAndLeft( x, y, player, gameBoard ) );
 
-        console.log( "POINTS EARNED: %d", hits.length );
-        console.log( "HITS: ", hits );
         return hits;
     }
 

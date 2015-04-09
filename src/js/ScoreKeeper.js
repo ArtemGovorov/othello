@@ -2,15 +2,11 @@
  * Created by Eric on 4/5/2015.
  */
 class ScoreKeeper {
-    constructor( gameBoard ) {
-        this.gameBoard = gameBoard;
-        this.numRows = gameBoard.rows.length;
-        this.numCols = gameBoard.rows[0].length;
-    }
+    constructor() { }
 
-    playerHasNextMove( playerNumber ) {
+    playerHasNextMove( playerNumber, gameBoard ) {
         let self = this;
-        self.getEmptyCells().forEach( function ( cell ) {
+        self.getEmptyCells( gameBoard ).forEach( function ( cell ) {
             if ( self.setScoreForMove( cell.col, cell.row, playerNumber ) > 0 ) {
                 return true;
             }
@@ -20,111 +16,125 @@ class ScoreKeeper {
     }
 
 
-    setScoreForMove( x, y, player ) {
+    setScoreForMove( x, y, player, gameBoard ) {
         let hits = [];
 
-        hits = hits.concat( this.searchUp( x, y, player ) );
-        hits = hits.concat( this.searchUpAndRight( x, y, player  ));
-        hits = hits.concat( this.searchRight( x, y, player ));
-        hits = hits.concat( this.searchDownAndRight( x, y, player ));
-        hits = hits.concat( this.searchDown( x, y, player ));
-        hits = hits.concat( this.searchDownAndLeft( x, y, player ));
-        hits = hits.concat( this.searchLeft( x, y, player ));
-        hits = hits.concat( this.searchUpAndLeft( x, y, player ));
+        hits = hits.concat( this.searchUp( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchUpAndRight( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchRight( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchDownAndRight( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchDown( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchDownAndLeft( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchLeft( x, y, player, gameBoard ) );
+        hits = hits.concat( this.searchUpAndLeft( x, y, player, gameBoard ) );
 
         console.log( "POINTS EARNED: %d", hits.length );
         console.log( "HITS: ", hits );
         return hits;
     }
 
-    getFlatGameBoard() {
-        return Array.prototype.concat.apply( [], this.gameBoard.rows );
+    getFlatGameBoard( gameBoard ) {
+        return Array.prototype.concat.apply( [], gameBoard.rows );
     }
 
-    getEmptyCells() {
-        return this.getFlatGameBoard().filter( function ( c ) {
+    getEmptyCells( gameBoard ) {
+        return this.getFlatGameBoard( gameBoard ).filter( function ( c ) {
             return c.player === 0;
         } );
     }
 
-    calculatePoints( row, col, rowInc, colInc, player ) {
+    calculatePoints( cell, rowInc, colInc, player, gameBoard ) {
         let cells = [], self = this;
 
-        if ( row === -1 || col === -1 || row === 8 || col === 8 ) {
-            return [];
-        }
-
         function getScore( r, c ) {
-            let [ reachedEdge, isEmpty, isPoint, cell ] = self.checkCell( r, c, player );
+            let cell = gameBoard[ r ][ c ],
+                checkResult = self.checkCell( cell, player );
 
-            if ( reachedEdge || isEmpty ) {
+            if ( !checkResult.isValidMove || checkResult.isEmpty ) {
                 return [];
-            } else if ( isPoint ) {
-                console.log("HIT! ", cell);
+            } else if ( checkResult.isPoint ) {
                 cells.push( cell );
                 return getScore( r + rowInc, c + colInc );
             } else {
-                console.log("Returning cells: ", cells);
                 return cells;
             }
         }
 
-        return getScore( row, col );
+        return getScore( cell.row, cell.col );
     }
 
-    checkCell( row, col, player ) {
-        let hasReachedEdge = ( row === this.numRows - 1 || col === this.numCols - 1 ),
-            cell = this.gameBoard.rows[ row ][ col ],
-            isEmptyCell = cell.player === 0,
-            isPoint = cell.player !== player && !isEmptyCell;
+    checkCell( cell, player ) {
+        let valid = this.isValidMove( cell ),
+            empty = valid ? cell.player === 0 : false,
+            point = valid ? cell.player !== player && !empty : false;
 
-        return [ hasReachedEdge, isEmptyCell, isPoint, cell ];
+        return {
+            isValidMove: valid,
+            isEmpty: empty,
+            isPoint: point
+        };
     }
 
-    getScoreForPlayer( playerNumber ) {
-        return this.getFlatGameBoard().reduce(function ( score, cell) {
+    getScoreForPlayer( playerNumber, gameBoard ) {
+        return this.getFlatGameBoard( gameBoard ).reduce( function ( score, cell ) {
             if ( cell.player === playerNumber ) {
                 score++;
             }
             return score;
-        }, 0)
+        }, 0 )
     }
 
-    resetMoveScoreRatings( ) {
-        this.getFlatGameBoard().forEach( function ( cell ) {
+    resetMoveScoreRatings( gameBoard ) {
+        this.getFlatGameBoard( gameBoard ).forEach( function ( cell ) {
             cell.isHighestScoring = false;
         } );
+
+        return gameBoard;
     }
 
-    searchRight( startingX, startingY, player ) {
-        return this.calculatePoints( startingY, startingX + 1, 0, 1, player );
+    searchRight( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, 0, 1, player, gameBoard );
     }
 
-    searchLeft( startingX, startingY, player ) {
-        return this.calculatePoints( startingY, startingX - 1, 0, -1, player );
+    searchLeft( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, 0, -1, player, gameBoard );
     }
 
-    searchUp( startingX, startingY, player ) {
-        return this.calculatePoints( startingY + 1, startingX, 1, 0, player );
+    searchUp( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, -1, 0, player, gameBoard );
     }
 
-    searchDown( startingX, startingY, player ) {
-        return this.calculatePoints( startingY - 1, startingX, -1, 0, player );
+    searchDown( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, 1, 0, player, gameBoard );
     }
 
-    searchUpAndRight( startingX, startingY, player ) {
-        return this.calculatePoints( startingY + 1, startingX + 1, 1, 1, player );
+    searchUpAndRight( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, -1, 1, player, gameBoard );
     }
 
-    searchUpAndLeft( startingX, startingY, player ) {
-        return this.calculatePoints( startingY + 1, startingX - 1, 1, -1, player );
+    searchUpAndLeft( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, -1, -1, player, gameBoard );
     }
 
-    searchDownAndRight( startingX, startingY, player ) {
-        return this.calculatePoints( startingY - 1, startingX + 1, -1, 1, player );
+    searchDownAndRight( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, 1, 1, player, gameBoard );
     }
 
-    searchDownAndLeft( startingX, startingY, player ) {
-        return this.calculatePoints( startingY - 1, startingX - 1, -1, -1, player );
+    searchDownAndLeft( startingX, startingY, player, gameBoard ) {
+        return this.searchAt( startingX, startingY, 1, -1, player, gameBoard );
+    }
+
+    searchAt( x, y, rowInc, colInc, player, gameBoard ) {
+        let cell = gameBoard.rows[ y + rowInc ][ x + colInc ];
+
+        return this.isValidMove( cell ) ?
+            this.calculatePoints( cell, rowInc, colInc, player, gameBoard ) : [];
+    }
+
+    isValidMove( cell ) {
+        return cell.row > -1 &&
+               cell.col > -1 &&
+               cell.row < 8 &&
+               cell.col < 8;
     }
 }

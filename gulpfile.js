@@ -17,7 +17,8 @@ gulp.task('build', function () {
         .pipe(uglify())
         .pipe(concat('app.js'))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest('dist/js'))
+        .pipe(reload());
 });
 
 gulp.task("less", function () {
@@ -35,12 +36,14 @@ gulp.task("reload", function () {
 
     gulp.src("./index.html" )
         .pipe(reload());
+
     gulp.src("./tests/SpecRunner.html" )
         .pipe(reload());
 });
 
 gulp.task("watch", function () {
     reload.listen();
+
     gulp.watch('src/js/**/*.js', ["build", "reload"]);
     gulp.watch('src/less/*.less', ["less", "reload"]);
     gulp.watch('tests/spec/*.js', ["reload"]);

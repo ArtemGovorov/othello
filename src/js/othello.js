@@ -23,7 +23,7 @@
         gameBoard.rows.push( row );
     }
 
-    _scoreKeeper = new ScoreKeeper( gameBoard );
+    _scoreKeeper = new ScoreKeeper();
 
     function renderGameBoard() {
         console.log( "Gameboard: ", gameBoard );
@@ -48,7 +48,7 @@
         let [ activePlayerNumber, otherPlayerNumber ] = getPlayerNumbers();
 
         // calculate points and set cell values
-        let hits = _scoreKeeper.setScoreForMove( col, row, activePlayerNumber );
+        let hits = _scoreKeeper.setScoreForMove( col, row, activePlayerNumber, gameBoard );
         let pointsEarned = hits.length;
 
         if ( !isTarget || pointsEarned === 0 )
@@ -69,7 +69,7 @@
         console.log( "Potential Next Moves: ", potentialNextMoves );
         let highestScoringNextMove = potentialNextMoves.sort( function ( c1, c2 ) {
             return c2.pointValue - c1.pointValue;
-        } )[0];
+        } )[ 0 ];
 
         highestScoringNextMove.isHighestScoring = true;
 
@@ -88,7 +88,7 @@
         updateActivePlayer( otherPlayerNumber );
         renderGameBoard();
         updateScoreBoards( _players );
-        _scoreKeeper.resetMoveScoreRatings();
+        _scoreKeeper.resetMoveScoreRatings( gameBoard );
 
         if ( potentialNextMoves ) {
             console.log( "It's now player %d's turn", otherPlayerNumber );
@@ -100,7 +100,7 @@
     } );
 
     function getPotentialNextMovesForNextPlayer() {
-        let flatGamBoard = _scoreKeeper.getFlatGameBoard();
+        let flatGamBoard = _scoreKeeper.getFlatGameBoard( gameBoard );
         flatGamBoard.forEach( function ( cell ) {
             cell.potentialTarget = false;
         } );
@@ -114,31 +114,30 @@
 
         let potentialNextMoves = [];
         let rows = gameBoard.rows;
-        let moveResult;
 
         activePlayerCells.forEach( function ( c ) {
-            let above = rows[ c.row + 1 ][ c.col ];
+            let above = BoardManager.tryGetCell( c.col, c.row - 1, gameBoard );
             scoreMove( above, potentialNextMoves );
 
-            let aboveRight = rows[ c.row + 1 ][ c.col + 1 ];
+            let aboveRight = BoardManager.tryGetCell( c.col + 1, c.row - 1, gameBoard );
             scoreMove( aboveRight, potentialNextMoves );
 
-            let aboveLeft = rows[ c.row + 1 ][ c.col - 1 ];
+            let aboveLeft = BoardManager.tryGetCell( c.col - 1, c.row - 1, gameBoard );
             scoreMove( aboveLeft, potentialNextMoves );
 
-            let left = rows[ c.row ][ c.col - 1 ];
+            let left = BoardManager.tryGetCell( c.col - 1, c.row, gameBoard );
             scoreMove( left, potentialNextMoves );
 
-            let right = rows[ c.row ][ c.col + 1 ];
+            let right = BoardManager.tryGetCell( c.col + 1, c.row, gameBoard );
             scoreMove( right, potentialNextMoves );
 
-            let below = rows[ c.row - 1 ][ c.col ];
+            let below = BoardManager.tryGetCell( c.col, c.row + 1, gameBoard );
             scoreMove( below, potentialNextMoves );
 
-            let belowRight = rows[ c.row - 1 ][ c.col + 1 ];
+            let belowRight = BoardManager.tryGetCell( c.col + 1, c.row + 1, gameBoard );
             scoreMove( belowRight, potentialNextMoves );
 
-            let belowLeft = rows[ c.row - 1 ][ c.col - 1 ];
+            let belowLeft = BoardManager.tryGetCell( c.col - 1, c.row + 1, gameBoard );
             scoreMove( belowLeft, potentialNextMoves );
         } );
 
@@ -147,7 +146,7 @@
 
     function moveEarnsPoints( cell ) {
         let [x,  otherPlayerNumber ] = getPlayerNumbers(),
-            hits = _scoreKeeper.setScoreForMove( cell.col, cell.row, otherPlayerNumber ),
+            hits = _scoreKeeper.setScoreForMove( cell.col, cell.row, otherPlayerNumber, gameBoard ),
             points = hits.length,
             isHit = cell.player === 0 && points > 0;
 
@@ -155,8 +154,10 @@
     }
 
     function scoreMove( move, potentialNextMoves ) {
+        if ( move === null ) return;
+
         let moveResult = moveEarnsPoints( move );
-        console.log( "belowLeft isHit: %a points: %d", moveResult.isHit, moveResult.points );
+        console.log( "isHit: %d %d points: %d", move.row, move.col, moveResult.points );
         if ( moveResult.isHit ) {
             move.potentialTarget = true;
             move.pointValue = moveResult.points;
@@ -175,7 +176,7 @@
         players.forEach( function ( player ) {
             let $playerSoreBoard = $( ".player-" + player.number );
 
-            player.score = _scoreKeeper.getScoreForPlayer( player.number );
+            player.score = _scoreKeeper.getScoreForPlayer( player.number, gameBoard );
 
             $( ".player-" + player.number + " .score" ).html( player.score );
             $( ".player-" + player.number + " .moves" ).html( player.moves.length );
@@ -211,5 +212,5 @@
     updateScoreBoards( _players );
 
 
-    console.log( "Empty cells: ", _scoreKeeper.getEmptyCells() );
+    console.log( "Empty cells: ", _scoreKeeper.getEmptyCells( gameBoard ) );
 })();

@@ -2,7 +2,8 @@
  * Created by Eric on 4/5/2015.
  */
 class ScoreKeeper {
-    constructor() { }
+    constructor() {
+    }
 
     playerHasNextMove( playerNumber, gameBoard ) {
         let self = this;
@@ -45,7 +46,11 @@ class ScoreKeeper {
         let cells = [], self = this;
 
         function getScore( r, c ) {
-            let cell = gameBoard[ r ][ c ],
+            if ( BoardManager.tryGetCell( c, r, gameBoard ) === null ) {
+                return [];
+            }
+
+            let cell = gameBoard.rows[ r ][ c ],
                 checkResult = self.checkCell( cell, player );
 
             if ( !checkResult.isValidMove || checkResult.isEmpty ) {
@@ -62,7 +67,7 @@ class ScoreKeeper {
     }
 
     checkCell( cell, player ) {
-        let valid = this.isValidMove( cell ),
+        let valid = BoardManager.isValidMove( cell.col, cell.row ),
             empty = valid ? cell.player === 0 : false,
             point = valid ? cell.player !== player && !empty : false;
 
@@ -123,16 +128,10 @@ class ScoreKeeper {
     }
 
     searchAt( x, y, rowInc, colInc, player, gameBoard ) {
-        let cell = gameBoard.rows[ y + rowInc ][ x + colInc ];
-
-        return this.isValidMove( cell ) ?
+        let cell = BoardManager.tryGetCell(  x + colInc , y + rowInc , gameBoard );
+        return cell !== null ?
             this.calculatePoints( cell, rowInc, colInc, player, gameBoard ) : [];
     }
 
-    isValidMove( cell ) {
-        return cell.row > -1 &&
-               cell.col > -1 &&
-               cell.row < 8 &&
-               cell.col < 8;
-    }
+
 }

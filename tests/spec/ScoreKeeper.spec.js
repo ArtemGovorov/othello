@@ -170,4 +170,18 @@ describe( "ScoreKeeper", function () {
             expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 1, row: 0, col: 0 } )
         } );
     } );
+
+    describe("searchAt", function () {
+       it("should return an empty array if passed an invalid cell location", function() {
+           var sut = _sk.searchAt( 0, 0, 0, 0, 1, {
+               rows: [
+                   [{ row: -1, col: 1 }]
+               ]
+           } );
+
+           expect( sut ).toEqual([]);
+       });
+    });
+
+
 } );

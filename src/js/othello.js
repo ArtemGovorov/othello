@@ -1,3 +1,4 @@
+
 /**
  * Created by Eric on 4/4/2015.
  */
@@ -10,7 +11,9 @@
         _playerTwo = new Player( 2 ),
         _activePlayer = _playerOne,
         _players = [ _playerOne, _playerTwo ],
-        _scoreKeeper;
+        _scoreKeeper,
+        _startTime = new Date(),
+        _lastMoveTime = new Date();
 
     const rowNum = 8;
     const colNum = 8;
@@ -38,6 +41,14 @@
         $( ".game-board" ).html( html );
     }
 
+    var recordTimeForMove = function ( move ) {
+        let now = new Date();
+        move.time = now - _lastMoveTime;
+        _lastMoveTime = now;
+
+        console.log("Move recorded: ", move);
+    };
+
     $( ".game-board" ).on( "click", ".cell", function () {
         let $cell = $( this );
         let row = +$cell.data( "row-num" );
@@ -47,21 +58,24 @@
         let isTarget = $cell.data( "target" );
         let [ activePlayerNumber, otherPlayerNumber ] = getPlayerNumbers();
 
+        if ( !isTarget )
+            return;
         // calculate points and set cell values
         let hits = _scoreKeeper.setScoreForMove( col, row, activePlayerNumber, gameBoard );
         let pointsEarned = hits.length;
 
-        if ( !isTarget || pointsEarned === 0 )
+        if ( pointsEarned === 0 )
             return;
 
+        let move = new Move( row, col, pointsEarned );
+        recordTimeforMove( move );
+        _activePlayer.moves.push( move );
+
         cellObj.player = activePlayerNumber;
+
         hits.forEach( function ( h ) {
             h.player = activePlayerNumber
         } );
-
-        let move = new Move( row, col, pointsEarned );
-
-        _activePlayer.moves.push( move );
 
         // check if next player has any moves based on board state
         // no, declare victory, else continue
@@ -113,7 +127,6 @@
         console.log( "Active player cells: ", activePlayerCells );
 
         let potentialNextMoves = [];
-        let rows = gameBoard.rows;
 
         activePlayerCells.forEach( function ( c ) {
             let above = BoardManager.tryGetCell( c.col, c.row - 1, gameBoard );

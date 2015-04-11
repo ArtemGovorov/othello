@@ -17,11 +17,17 @@
     "jasmine-core": "^2.2.0"
   },
   "devDependencies": {
+    "co": "^4.5.1",
+    "co-views": "^0.3.0",
     "gulp-less": "^3.0.2",
     "gulp-minify-css": "^1.0.0",
-    "gulp-rename": "^1.2.2"
+    "gulp-rename": "^1.2.2",
+    "koa": "^0.19.0",
+    "koa-route": "^2.4.0",
+    "monk": "^1.0.1"
   },
   "scripts": {
+    "start": "node --harmony app.js",
     "test": "gulp test"
   },
   "repository": {

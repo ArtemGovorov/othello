@@ -5,14 +5,16 @@
 
 (() => {
     let gameBoard = {
-            rows: []
+            rows: [],
+            moves: []
         },
         _playerOne = new Player( 1 ),
         _playerTwo = new Player( 2 ),
         _activePlayer = _playerOne,
         _players = [ _playerOne, _playerTwo ],
-        _scoreKeeper,
+        _scoreKeeper, _gameOver = false,
         _startTime = new Date(),
+        _repo = new Repository(),
         _lastMoveTime = new Date();
 
     const rowNum = 8;
@@ -33,7 +35,7 @@
         let html = '';
         gameBoard.rows.forEach( function ( row, i ) {
             row.forEach( function ( cell, j ) {
-                html += `<div class='cell' data-target="${cell.potentialTarget}" data-is-highest-sciring-move="${cell.isHighestScoring}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
+                html += `<div class='cell' data-target="${cell.potentialTarget}" data-is-highest-scoring-move="${cell.isHighestScoring}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
             } );
 
         } );
@@ -41,12 +43,20 @@
         $( ".game-board" ).html( html );
     }
 
-    var recordTimeForMove = function ( move ) {
+    var recordTimeForMove = function ( move, matchStartTime ) {
         let now = new Date();
         move.time = now - _lastMoveTime;
+        move.timeInMatch = now - matchStartTime;
         _lastMoveTime = now;
 
         console.log("Move recorded: ", move);
+
+        _repo.recordMove( {
+            players: _players,
+            gameBoard: gameBoard,
+            timestamp: now - matchStartTime,
+            gameCompleted: _gameOver
+        } );
     };
 
     $( ".game-board" ).on( "click", ".cell", function () {
@@ -54,6 +64,7 @@
         let row = +$cell.data( "row-num" );
         let col = +$cell.data( "col-num" );
         let player = +$cell.data( "player-num" );
+        let isHighestScoring = $cell.data("is-highest-scoring-move");
         let cellObj = gameBoard.rows[ row ][ col ];
         let isTarget = $cell.data( "target" );
         let [ activePlayerNumber, otherPlayerNumber ] = getPlayerNumbers();
@@ -67,15 +78,17 @@
         if ( pointsEarned === 0 )
             return;
 
-        let move = new Move( row, col, pointsEarned );
-        recordTimeforMove( move );
-        _activePlayer.moves.push( move );
+        let move = new Move( row, col, pointsEarned, activePlayerNumber, isHighestScoring );
+        gameBoard.moves.push( move );
+
 
         cellObj.player = activePlayerNumber;
 
         hits.forEach( function ( h ) {
             h.player = activePlayerNumber
         } );
+
+        recordTimeForMove( move, _startTime );
 
         // check if next player has any moves based on board state
         // no, declare victory, else continue
@@ -170,7 +183,7 @@
         if ( move === null ) return;
 
         let moveResult = moveEarnsPoints( move );
-        console.log( "isHit: %d %d points: %d", move.row, move.col, moveResult.points );
+       // console.log( "isHit: %d %d points: %d", move.row, move.col, moveResult.points );
         if ( moveResult.isHit ) {
             move.potentialTarget = true;
             move.pointValue = moveResult.points;
@@ -209,10 +222,16 @@
         gameBoard.rows[ 4 ][ 4 ].player = 1;
 
         // mark player one potential targets
-        gameBoard.rows[ 2 ][ 4 ].potentialTarget = true;
-        gameBoard.rows[ 3 ][ 5 ].potentialTarget = true;
-        gameBoard.rows[ 4 ][ 2 ].potentialTarget = true;
-        gameBoard.rows[ 5 ][ 3 ].potentialTarget = true;
+        let potentialMoves = [
+            gameBoard.rows[ 2 ][ 4 ],
+            gameBoard.rows[ 3 ][ 5 ],
+            gameBoard.rows[ 4 ][ 2 ],
+            gameBoard.rows[ 5 ][ 3 ]
+        ];
+
+        potentialMoves.forEach( function ( cell ) {
+            cell.potentialTarget = true;
+        } );
     }
 
     function getPlayerNumbers() {

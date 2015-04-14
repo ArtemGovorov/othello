@@ -9,6 +9,8 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var watch = require('gulp-watch');
 var reload = require('gulp-livereload');
+var exec = require('child_process').exec;
+
 
 gulp.task('build', function () {
     return gulp.src('src/js/**/*.js')

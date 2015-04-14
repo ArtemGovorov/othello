@@ -9,7 +9,7 @@ var BoardManager = {
             null;
     },
     isValidMove: function ( x, y ) {
-        console.log("isValidMove: %d %d ", x, y);
+        //console.log("isValidMove: %d %d ", x, y);
         return ( x > -1 && y > -1 ) &&
             ( x < 8 && y < 8 );
     }

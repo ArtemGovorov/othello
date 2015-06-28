@@ -120,7 +120,7 @@ describe( "ScoreKeeper", function () {
         var gb;
 
         beforeEach( function () {
-            spyOn( _sk, "isValidMove" );
+            spyOn( BoardManager, "isValidMove" );
             gb = {
                 rows: [
                     [ { player: 1, row: 0, col: 0 }, { player: 1, row: 0, col: 1 }, { player: 0, row: 0, col: 2 } ],
@@ -132,42 +132,42 @@ describe( "ScoreKeeper", function () {
 
         it( "searchRight should search in the right direction", function () {
             _sk.searchRight( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 0, row: 1, col: 2 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 2,1 )
         } );
 
         it( "searchLeft should search in the right direction", function () {
             _sk.searchLeft( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 1, row: 1, col: 0 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 0,1 )
         } );
 
         it( "searchUp should search in the right direction", function () {
             _sk.searchUp( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 1, row: 0, col: 1 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 1,0 )
         } );
 
         it( "searchDown should search in the right direction", function () {
             _sk.searchDown( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 0, row: 2, col: 1 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 1,2 )
         } );
 
         it( "searchDownAndRight should search in the right direction", function () {
             _sk.searchDownAndRight( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 0, row: 2, col: 2 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 2,2 )
         } );
 
         it( "searchDownAndLeft should search in the right direction", function () {
             _sk.searchDownAndLeft( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 1, row: 2, col: 0 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 0,2 )
         } );
 
         it( "searchUpAndRight should search in the right direction", function () {
             _sk.searchUpAndRight( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 0, row: 0, col: 2 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 2,0 )
         } );
 
         it( "searchUpAndLeft should search in the right direction", function () {
             _sk.searchUpAndLeft( 1, 1, 1, gb );
-            expect( _sk.isValidMove ).toHaveBeenCalledWith( { player: 1, row: 0, col: 0 } )
+            expect( BoardManager.isValidMove ).toHaveBeenCalledWith( 0,0 )
         } );
     } );
 

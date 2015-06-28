@@ -30,4 +30,3 @@ class Cell {
         this.potentialTarget = false;
     }
 }
-

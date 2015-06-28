@@ -2,32 +2,34 @@
  * Created by Eric on 4/5/2015.
  */
 class ScoreKeeper {
-    constructor() {
-    }
+    constructor() { }
 
     playerHasNextMove( playerNumber, gameBoard ) {
         let self = this;
-        self.getEmptyCells( gameBoard ).forEach( function ( cell ) {
-            if ( self.setScoreForMove( cell.col, cell.row, playerNumber ) > 0 ) {
+        self.getEmptyCells( gameBoard ).forEach( ( cell ) => {
+            if ( self.setScoreForMove( cell.col, cell.row, playerNumber ) > 0 )
                 return true;
-            }
         } );
 
         return false;
     }
 
-
     setScoreForMove( x, y, player, gameBoard ) {
-        let hits = [];
+        let hits = [],
+            searchDirections = [
+              "Up",
+              "UpAndRight",
+              "Right",
+              "DownAndRight",
+              "Down",
+              "DownAndLeft",
+              "Left", 
+              "UpAndLeft"
+            ];
 
-        hits = hits.concat( this.searchUp( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchUpAndRight( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchRight( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchDownAndRight( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchDown( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchDownAndLeft( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchLeft( x, y, player, gameBoard ) );
-        hits = hits.concat( this.searchUpAndLeft( x, y, player, gameBoard ) );
+        searchDirections.forEach( ( direction ) => {
+          hits = hits.concat( this["search" + direction]( x, y, player, gameBoard ) );
+        } );
 
         return hits;
     }
@@ -37,7 +39,7 @@ class ScoreKeeper {
     }
 
     getEmptyCells( gameBoard ) {
-        return this.getFlatGameBoard( gameBoard ).filter( function ( c ) {
+        return this.getFlatGameBoard( gameBoard ).filter( ( c ) => {
             return c.player === 0;
         } );
     }
@@ -79,16 +81,16 @@ class ScoreKeeper {
     }
 
     getScoreForPlayer( playerNumber, gameBoard ) {
-        return this.getFlatGameBoard( gameBoard ).reduce( function ( score, cell ) {
-            if ( cell.player === playerNumber ) {
+        return this.getFlatGameBoard( gameBoard ).reduce( ( score, cell ) => {
+            if ( cell.player === playerNumber )
                 score++;
-            }
+
             return score;
         }, 0 )
     }
 
     resetMoveScoreRatings( gameBoard ) {
-        this.getFlatGameBoard( gameBoard ).forEach( function ( cell ) {
+        this.getFlatGameBoard( gameBoard ).forEach( ( cell ) => {
             cell.isHighestScoring = false;
         } );
 

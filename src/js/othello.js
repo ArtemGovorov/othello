@@ -31,10 +31,10 @@
     _scoreKeeper = new ScoreKeeper();
 
     function renderGameBoard() {
-        console.log( "Gameboard: ", gameBoard );
         let html = '';
-        gameBoard.rows.forEach( function ( row, i ) {
-            row.forEach( function ( cell, j ) {
+
+        gameBoard.rows.forEach( ( row, i ) => {
+            row.forEach( ( cell, j ) => {
                 html += `<div class='cell' data-target="${cell.potentialTarget}" data-is-highest-scoring-move="${cell.isHighestScoring}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
             } );
 
@@ -45,11 +45,10 @@
 
     var recordTimeForMove = function ( move, matchStartTime ) {
         let now = new Date();
+
         move.time = now - _lastMoveTime;
         move.timeInMatch = now - matchStartTime;
         _lastMoveTime = now;
-
-        console.log("Move recorded: ", move);
 
         _repo.recordMove( {
             players: _players,
@@ -71,6 +70,7 @@
 
         if ( !isTarget )
             return;
+
         // calculate points and set cell values
         let hits = _scoreKeeper.setScoreForMove( col, row, activePlayerNumber, gameBoard );
         let pointsEarned = hits.length;
@@ -80,7 +80,6 @@
 
         let move = new Move( row, col, pointsEarned, activePlayerNumber, isHighestScoring );
         gameBoard.moves.push( move );
-
 
         cellObj.player = activePlayerNumber;
 
@@ -94,7 +93,7 @@
         // no, declare victory, else continue
         let potentialNextMoves = getPotentialNextMovesForNextPlayer();
         console.log( "Potential Next Moves: ", potentialNextMoves );
-        let highestScoringNextMove = potentialNextMoves.sort( function ( c1, c2 ) {
+        let highestScoringNextMove = potentialNextMoves.sort( ( c1, c2 ) => {
             return c2.pointValue - c1.pointValue;
         } )[ 0 ];
 
@@ -128,12 +127,12 @@
 
     function getPotentialNextMovesForNextPlayer() {
         let flatGamBoard = _scoreKeeper.getFlatGameBoard( gameBoard );
-        flatGamBoard.forEach( function ( cell ) {
+        flatGamBoard.forEach( ( cell ) => {
             cell.potentialTarget = false;
         } );
 
         let activePlayerCells = flatGamBoard
-            .filter( function ( cell ) {
+            .filter( ( cell ) => {
                 return cell.player === _activePlayer.number;
             } );
 

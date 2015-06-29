@@ -2,21 +2,25 @@
  * Created by Eric on 4/12/2015.
  */
 
-var Repository = function () {
-    this.snapshots = [];
-};
+class Repository {
 
-Repository.prototype.recordMove = function ( data ) {
-    let snapshot = this.getSnapshotPattern( data.gameBoard );
-    console.log( "Snapshot created: ", snapshot );
+    constructor() {
+        this.snapshots = [];
+    }
 
-    this.snapshots.push( snapshot );
-    data.snapShots = this.snapshots;
-    console.log( "Saving Data: ", data );
-};
+    recordMove( data ) {
+        let snapshot = this.getSnapshotPattern( data.gameBoard );
+        console.log( "Snapshot created: ", snapshot );
 
-Repository.prototype.getSnapshotPattern = function ( gameboard ) {
-    return gameboard.moves.reduce( function ( pattern, move ) {
-        return pattern + `${move.x}-${move.y}-${move.player}-${ +move.wasHighestScoring || 0},`;
-    }, "" );
-};
+        this.snapshots.push( snapshot );
+        data.snapShots = this.snapshots;
+        console.log( "Saving Data: ", data );
+    }
+
+    getSnapshotPattern( gameboard ) {
+        return gameboard.moves.reduce( ( pattern, move ) => {
+            return pattern + `${move.x}-${move.y}-${move.player}-${ +move.wasHighestScoring || 0},`;
+        }, "" );
+    }
+}
+

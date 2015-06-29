@@ -2,7 +2,9 @@
  * Created by Eric on 4/5/2015.
  */
 class ScoreKeeper {
-    constructor() { }
+    constructor( boardManager ) {
+        this.boardManager = boardManager;
+    }
 
     playerHasNextMove( playerNumber, gameBoard ) {
         let self = this;
@@ -48,7 +50,7 @@ class ScoreKeeper {
         let cells = [], self = this;
 
         function getScore( r, c ) {
-            if ( BoardManager.tryGetCell( c, r, gameBoard ) === null ) {
+            if ( self.boardManager.tryGetCell( c, r, gameBoard ) === null ) {
                 return [];
             }
 
@@ -69,7 +71,7 @@ class ScoreKeeper {
     }
 
     checkCell( cell, player ) {
-        let valid = BoardManager.isValidMove( cell.col, cell.row ),
+        let valid = this.boardManager.isValidMove( cell.col, cell.row ),
             empty = valid ? cell.player === 0 : false,
             point = valid ? cell.player !== player && !empty : false;
 
@@ -130,7 +132,7 @@ class ScoreKeeper {
     }
 
     searchAt( x, y, rowInc, colInc, player, gameBoard ) {
-        let cell = BoardManager.tryGetCell(  x + colInc , y + rowInc , gameBoard );
+        let cell = this.boardManager.tryGetCell(  x + colInc , y + rowInc , gameBoard );
         return cell !== null ?
             this.calculatePoints( cell, rowInc, colInc, player, gameBoard ) : [];
     }

@@ -1,6 +1,3 @@
-/**
- * Created by Eric on 4/9/2015.
- */
 
 class BoardManager {
     constructor() { }

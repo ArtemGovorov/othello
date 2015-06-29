@@ -15,6 +15,7 @@
         _scoreKeeper, _gameOver = false,
         _startTime = new Date(),
         _repo = new Repository(),
+        _boardManager = new BoardManager(),
         _lastMoveTime = new Date();
 
     const rowNum = 8;
@@ -28,7 +29,7 @@
         gameBoard.rows.push( row );
     }
 
-    _scoreKeeper = new ScoreKeeper();
+    _scoreKeeper = new ScoreKeeper( _boardManager );
 
     function renderGameBoard() {
         let html = '';
@@ -37,7 +38,6 @@
             row.forEach( ( cell, j ) => {
                 html += `<div class='cell' data-target="${cell.potentialTarget}" data-is-highest-scoring-move="${cell.isHighestScoring}" data-player-num="${cell.player}" data-row-num='${i}' data-col-num='${j}'>${cell.player}</div>`;
             } );
-
         } );
 
         $( ".game-board" ).html( html );
@@ -136,33 +136,31 @@
                 return cell.player === _activePlayer.number;
             } );
 
-        console.log( "Active player cells: ", activePlayerCells );
-
         let potentialNextMoves = [];
 
         activePlayerCells.forEach( function ( c ) {
-            let above = BoardManager.tryGetCell( c.col, c.row - 1, gameBoard );
+            let above = _boardManager.tryGetCell( c.col, c.row - 1, gameBoard );
             scoreMove( above, potentialNextMoves );
 
-            let aboveRight = BoardManager.tryGetCell( c.col + 1, c.row - 1, gameBoard );
+            let aboveRight = _boardManager.tryGetCell( c.col + 1, c.row - 1, gameBoard );
             scoreMove( aboveRight, potentialNextMoves );
 
-            let aboveLeft = BoardManager.tryGetCell( c.col - 1, c.row - 1, gameBoard );
+            let aboveLeft = _boardManager.tryGetCell( c.col - 1, c.row - 1, gameBoard );
             scoreMove( aboveLeft, potentialNextMoves );
 
-            let left = BoardManager.tryGetCell( c.col - 1, c.row, gameBoard );
+            let left = _boardManager.tryGetCell( c.col - 1, c.row, gameBoard );
             scoreMove( left, potentialNextMoves );
 
-            let right = BoardManager.tryGetCell( c.col + 1, c.row, gameBoard );
+            let right = _boardManager.tryGetCell( c.col + 1, c.row, gameBoard );
             scoreMove( right, potentialNextMoves );
 
-            let below = BoardManager.tryGetCell( c.col, c.row + 1, gameBoard );
+            let below = _boardManager.tryGetCell( c.col, c.row + 1, gameBoard );
             scoreMove( below, potentialNextMoves );
 
-            let belowRight = BoardManager.tryGetCell( c.col + 1, c.row + 1, gameBoard );
+            let belowRight = _boardManager.tryGetCell( c.col + 1, c.row + 1, gameBoard );
             scoreMove( belowRight, potentialNextMoves );
 
-            let belowLeft = BoardManager.tryGetCell( c.col - 1, c.row + 1, gameBoard );
+            let belowLeft = _boardManager.tryGetCell( c.col - 1, c.row + 1, gameBoard );
             scoreMove( belowLeft, potentialNextMoves );
         } );
 

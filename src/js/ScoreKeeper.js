@@ -8,7 +8,7 @@ class ScoreKeeper {
 
     playerHasNextMove( playerNumber, gameBoard ) {
         let self = this;
-        self.getEmptyCells( gameBoard ).forEach( ( cell ) => {
+        self.getEmptyCells( gameBoard ).forEach(( cell ) => {
             if ( self.setScoreForMove( cell.col, cell.row, playerNumber ) > 0 )
                 return true;
         } );
@@ -25,12 +25,12 @@ class ScoreKeeper {
               "DownAndRight",
               "Down",
               "DownAndLeft",
-              "Left", 
+              "Left",
               "UpAndLeft"
             ];
 
-        searchDirections.forEach( ( direction ) => {
-          hits = hits.concat( this["search" + direction]( x, y, player, gameBoard ) );
+        searchDirections.forEach(( direction ) => {
+            hits = hits.concat( this["search" + direction]( x, y, player, gameBoard ) );
         } );
 
         return hits;
@@ -41,7 +41,7 @@ class ScoreKeeper {
     }
 
     getEmptyCells( gameBoard ) {
-        return this.getFlatGameBoard( gameBoard ).filter( ( c ) => {
+        return this.getFlatGameBoard( gameBoard ).filter(( c ) => {
             return c.player === 0;
         } );
     }
@@ -54,7 +54,7 @@ class ScoreKeeper {
                 return [];
             }
 
-            let cell = gameBoard.rows[ r ][ c ],
+            let cell = gameBoard.rows[r][c],
                 checkResult = self.checkCell( cell, player );
 
             if ( !checkResult.isValidMove || checkResult.isEmpty ) {
@@ -83,16 +83,16 @@ class ScoreKeeper {
     }
 
     getScoreForPlayer( playerNumber, gameBoard ) {
-        return this.getFlatGameBoard( gameBoard ).reduce( ( score, cell ) => {
-            if ( cell.player === playerNumber )
+        return this.getFlatGameBoard(gameBoard).reduce(( score, cell ) => {
+            if (cell.player === playerNumber)
                 score++;
 
             return score;
-        }, 0 )
+        }, 0);
     }
 
     resetMoveScoreRatings( gameBoard ) {
-        this.getFlatGameBoard( gameBoard ).forEach( ( cell ) => {
+        this.getFlatGameBoard( gameBoard ).forEach(( cell ) => {
             cell.isHighestScoring = false;
         } );
 
@@ -132,7 +132,7 @@ class ScoreKeeper {
     }
 
     searchAt( x, y, rowInc, colInc, player, gameBoard ) {
-        let cell = this.boardManager.tryGetCell(  x + colInc , y + rowInc , gameBoard );
+        let cell = this.boardManager.tryGetCell( x + colInc, y + rowInc, gameBoard );
         return cell !== null ?
             this.calculatePoints( cell, rowInc, colInc, player, gameBoard ) : [];
     }

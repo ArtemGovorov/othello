@@ -3,7 +3,7 @@
 module.exports = function ( wallaby ) {
     return {
         files: [
-           { pattern: "dist/js/vendor/jQuery.js", instrumant: false },
+           { pattern: "dist/js/vendor/jQuery.js", instrument: false },
             "src/js/*.js"
         ],
 

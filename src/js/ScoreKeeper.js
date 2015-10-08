@@ -8,10 +8,9 @@ class ScoreKeeper {
 
     playerHasNextMove( playerNumber, gameBoard ) {
         let self = this;
-        self.getEmptyCells( gameBoard ).forEach(( cell ) => {
-            if ( self.setScoreForMove( cell.col, cell.row, playerNumber ) > 0 )
-                return true;
-        } );
+
+        self.getEmptyCells( gameBoard ).forEach( cell  =>
+            self.setScoreForMove( cell.col, cell.row, playerNumber ) > 0 );
 
         return false;
     }
@@ -36,15 +35,7 @@ class ScoreKeeper {
         return hits;
     }
 
-    getFlatGameBoard( gameBoard ) {
-        return Array.prototype.concat.apply( [], gameBoard.rows );
-    }
-
-    getEmptyCells( gameBoard ) {
-        return this.getFlatGameBoard( gameBoard ).filter(( c ) => {
-            return c.player === 0;
-        } );
-    }
+    
 
     calculatePoints( cell, rowInc, colInc, player, gameBoard ) {
         let cells = [], self = this;
@@ -55,11 +46,11 @@ class ScoreKeeper {
             }
 
             let cell = gameBoard.rows[r][c],
-                checkResult = self.checkCell( cell, player );
+                result = self.checkCell( cell, player );
 
-            if ( !checkResult.isValidMove || checkResult.isEmpty ) {
+            if ( !result.isValidMove || result.isEmpty ) {
                 return [];
-            } else if ( checkResult.isPoint ) {
+            } else if ( result.isPoint ) {
                 cells.push( cell );
                 return getScore( r + rowInc, c + colInc );
             } else {
@@ -71,9 +62,9 @@ class ScoreKeeper {
     }
 
     checkCell( cell, player ) {
-        let valid = this.boardManager.isValidMove( cell.col, cell.row ),
-            empty = valid ? cell.player === 0 : false,
-            point = valid ? cell.player !== player && !empty : false;
+        const valid = this.boardManager.isValidMove( cell.col, cell.row ),
+              empty = valid ? cell.player === 0 : false,
+              point = valid ? cell.player !== player && !empty : false;
 
         return {
             isValidMove: valid,
@@ -83,7 +74,7 @@ class ScoreKeeper {
     }
 
     getScoreForPlayer( playerNumber, gameBoard ) {
-        return this.getFlatGameBoard(gameBoard).reduce(( score, cell ) => {
+        return this.boardManager.getFlatGameBoard(gameBoard).reduce(( score, cell ) => {
             if (cell.player === playerNumber)
                 score++;
 
@@ -92,9 +83,8 @@ class ScoreKeeper {
     }
 
     resetMoveScoreRatings( gameBoard ) {
-        this.getFlatGameBoard( gameBoard ).forEach(( cell ) => {
-            cell.isHighestScoring = false;
-        } );
+        this.boardManager.getFlatGameBoard( gameBoard )
+            .forEach( cell  => cell.isHighestScoring = false );
 
         return gameBoard;
     }

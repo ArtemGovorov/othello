@@ -23,10 +23,10 @@ class Move {
 }
 
 class Cell {
-    constructor( row, col ) {
+    constructor( row, col, player ) {
         this.row = row;
         this.col = col;
-        this.player = 0;
+        this.player = player; 
         this.potentialTarget = false;
     }
 }

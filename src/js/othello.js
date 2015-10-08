@@ -4,11 +4,7 @@
  */
 
 (() => {
-    let gameBoard = {
-            rows: [],
-            moves: []
-        },
-        _playerOne = new Player( 1 ),
+    let _playerOne = new Player( 1 ),
         _playerTwo = new Player( 2 ),
         _activePlayer = _playerOne,
         _players = [ _playerOne, _playerTwo ],
@@ -16,18 +12,10 @@
         _startTime = new Date(),
         _repo = new Repository(),
         _boardManager = new BoardManager(),
+        gameBoard = _boardManager.getInitialGameboard(),
         _lastMoveTime = new Date();
 
-    const rowNum = 8;
-    const colNum = 8;
-
-    for ( let i = 0; i < rowNum; i++ ) {
-        let row = [];
-        for ( let j = 0; j < colNum; j++ ) {
-            row.push( new Cell( i, j ) );
-        }
-        gameBoard.rows.push( row );
-    }
+   
 
     _scoreKeeper = new ScoreKeeper( _boardManager );
 
@@ -241,5 +229,5 @@
     updateScoreBoards( _players );
 
 
-    console.log( "Empty cells: ", _scoreKeeper.getEmptyCells( gameBoard ) );
+    // console.log( "Empty cells: ", _scoreKeeper.getEmptyCells( gameBoard ) );
 })();

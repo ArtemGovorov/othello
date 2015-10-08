@@ -4,8 +4,7 @@ module.exports = function ( wallaby ) {
     return {
         files: [
            { pattern: "dist/js/vendor/jQuery.js", instrumant: false },
-            "src/js/*.js",
-            "src/js/*.ts"
+            "src/js/*.js"
         ],
 
         tests: [
